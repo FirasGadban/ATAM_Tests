@@ -1,0 +1,31 @@
+# -----------------------------------------------------
+# TEST 38: RPN Calculator
+# -----------------------------------------------------
+# Expression: "8,4,8,6/-*"
+# Expected result: 24
+# -----------------------------------------------------
+
+.section .data
+
+exp:
+    .string "8,4,8,6/-*"
+
+res:
+    .int -1                # output result placeholder
+
+.section .text
+
+    # After ex2 returns, check if res matches expected value
+    movl res(%rip), %eax
+    cmp $24, %eax
+    je success
+
+error:
+    mov $60, %rax              # sys_exit
+    mov $1, %rdi               # exit code 1 (error)
+    syscall
+
+success:
+    mov $60, %rax              # sys_exit
+    xor %rdi, %rdi             # exit code 0 (success)
+    syscall

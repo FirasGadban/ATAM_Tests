@@ -1,0 +1,31 @@
+# -----------------------------------------------------
+# TEST 19: Vowel Counting
+# -----------------------------------------------------
+# String: "a"
+# Expected count: 1
+# -----------------------------------------------------
+
+.section .data
+
+str:
+    .string "a"
+
+count:
+    .int -1                # output result placeholder
+
+.section .text
+
+    # After ex1 returns, check if count matches expected value
+    movl count(%rip), %eax
+    cmp $1, %eax
+    je success
+
+error:
+    mov $60, %rax              # sys_exit
+    mov $1, %rdi               # exit code 1 (error)
+    syscall
+
+success:
+    mov $60, %rax              # sys_exit
+    xor %rdi, %rdi             # exit code 0 (success)
+    syscall

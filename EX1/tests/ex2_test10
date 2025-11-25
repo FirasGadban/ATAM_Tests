@@ -1,0 +1,31 @@
+# -----------------------------------------------------
+# TEST 10: RPN Calculator
+# -----------------------------------------------------
+# Expression: "5,3-2-"
+# Expected result: 0
+# -----------------------------------------------------
+
+.section .data
+
+exp:
+    .string "5,3-2-"
+
+res:
+    .int -1                # output result placeholder
+
+.section .text
+
+    # After ex2 returns, check if res matches expected value
+    movl res(%rip), %eax
+    cmp $0, %eax
+    je success
+
+error:
+    mov $60, %rax              # sys_exit
+    mov $1, %rdi               # exit code 1 (error)
+    syscall
+
+success:
+    mov $60, %rax              # sys_exit
+    xor %rdi, %rdi             # exit code 0 (success)
+    syscall
