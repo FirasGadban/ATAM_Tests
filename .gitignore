@@ -1,9 +1,14 @@
 # Assembly exercise files
-EX1/ex1.asm
-EX1/ex2.asm
-EX1/ex3.asm
-EX1/ex4.asm
+ex1.asm
+ex2.asm
+ex3.asm
+ex4.asm
+**/ex1.asm
+**/ex2.asm
+**/ex3.asm
+**/ex4.asm
 
 # Test generator script
-EX1/generate_tests.py
+generate_tests.py
+**/generate_tests.py
 
