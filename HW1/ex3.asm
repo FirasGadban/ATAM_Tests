@@ -1,0 +1,119 @@
+.global _start
+
+.section .text
+_start:
+   
+    lea str, %rsi           # Load source address
+    lea enc, %rdi           # Load dest address
+
+    xor %rax, %rax          # Clear rax
+    movb (%rsi), %al        # Load first char into al 
+    cmpb $0, %al            # Check if empty str
+    je exit_program_HW1     # Exit if empty
+
+    movb %al, %r8b          # Save current char in r8b
+    movq $1, %rcx           # Init counter
+    addq $1, %rsi           # Move pointer to next char 
+
+count_char_loop_HW1:
+    movb (%rsi), %al        # Read new char into al
+    cmpb $0, %al            # Check null terminator
+    je handle_final_sequence_HW1    
+
+    cmpb %r8b, %al          # Compare with current(al) and previos saved in r8b
+    jne sequence_ended_HW1  # If diff, process seq
+
+    addq $1, %rcx           # Increment counter
+    addq $1, %rsi           # Move pointer to next char
+    jmp count_char_loop_HW1    
+
+
+sequence_ended_HW1:
+    movq %rax, %r11         # Save next char temp
+    movq %rcx, %rax         # Move count to rax
+    movq $1, %r10           # Init divisor
+
+
+find_max_power_10_HW1:
+    movq %r10, %rbx
+    imulq $10, %rbx         # Calc power of 10
+    cmpq %rax, %rbx         # Check if div > num
+    jg print_digits_loop_HW1 # If bigger, start printing
+    movq %rbx, %r10         # Update divisor
+    jmp find_max_power_10_HW1
+
+# --- Printing Loop: Convert Number to ASCII ---
+# Divide the number by the divisor to get the leading digit. Convert it to ASCII ('0'-'9'), write it to memory, and repeat for the remainder.
+print_digits_loop_HW1:
+    xor %rdx, %rdx          # Clear remainder
+    div %r10                # Divide rax by r10
+    
+    addb $'0', %al          # Convert to ASCII
+    movb %al, (%rdi)        # Write digit
+    addq $1, %rdi           # Inc dest pointer
+
+    movq %rdx, %rax         # Remainder is next num
+    
+    xor %rdx, %rdx          # Clear remainder for next div
+    movq %rax, %rbx         # Save num temp
+    movq %r10, %rax         # Load divisor to rax
+    movq $10, %r12          # Set divisor 10
+    div %r12                # Div divisor by 10
+    movq %rax, %r10         # Update divisor
+    movq %rbx, %rax         # Restore num
+
+    cmpq $0, %r10           # Check if divisor is 0
+    jne print_digits_loop_HW1
+
+    movb %r8b, (%rdi)       # Write current char
+    addq $1, %rdi           # Inc dest pointer
+
+    movq %r11, %rax         # Restore next char
+    movb %al, %r8b          # Update current char
+    movq $1, %rcx           # Reset counter
+    addq $1, %rsi           # Inc source pointer
+    jmp count_char_loop_HW1
+
+handle_final_sequence_HW1:
+    movq %rcx, %rax         # Load count
+    movq $1, %r10           # Reset divisor
+
+find_max_power_10_last_HW1:
+    movq %r10, %rbx
+    imulq $10, %rbx         # Calc power of 10
+    cmpq %rax, %rbx         # Check if div > num
+    jg print_digits_last_HW1 # If bigger, start printing
+    movq %rbx, %r10         # Update divisor
+    jmp find_max_power_10_last_HW1
+
+print_digits_last_HW1:
+    xor %rdx, %rdx          # Clear remainder
+    div %r10                # Divide rax by r10
+    
+    addb $'0', %al          # Convert to ASCII
+    movb %al, (%rdi)        # Write digit
+    addq $1, %rdi           # Inc dest pointer
+    movq %rdx, %rax         # Remainder is next num
+    
+    xor %rdx, %rdx          # Clear remainder for next div
+    movq %rax, %rbx         # Save num temp
+    movq %r10, %rax         # Load divisor to rax
+    movq $10, %r12          # Set divisor 10
+    div %r12                # Div divisor by 10
+    movq %rax, %r10         # Update divisor
+    movq %rbx, %rax         # Restore num
+
+    cmpq $0, %r10           # Check if divisor is 0
+    jne print_digits_last_HW1
+
+    movb %r8b, (%rdi)       # Write last char
+    addq $1, %rdi           # Inc dest pointer
+
+# --- Cleanup & Exit ---
+# Add the null terminator to the encoded string so it's a valid string.
+terminate_string_HW1:
+    movb $0, (%rdi)      
+
+exit_program_HW1:
+    # Done
+	

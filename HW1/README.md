@@ -16,6 +16,6 @@ chmod +x ./run_test.sh
 
 Example:
 ```bash
-./run_test.sh ex4.asm tests/ex4_test1
+./run_test.sh ex4.asm tests/ex4/ex4_test1
 ```
 
