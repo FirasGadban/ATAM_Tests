@@ -1,0 +1,62 @@
+# -----------------------------------------------------
+# TEST 26: Capture Own Piece (Invalid)
+# -----------------------------------------------------
+# Move: (4,4) -> (4,6)
+# Piece: r
+# Player: 0 (0=White, 1=Black)
+# Expected Result: 0
+# -----------------------------------------------------
+
+.section .data
+
+# --- Before move ---
+board_1:
+    .byte 0,0,0,0,0,0,0,0
+    .byte 0,0,0,0,0,0,0,0
+    .byte 0,0,0,0,0,0,0,0
+    .byte 0,0,0,0,0,0,0,0
+    .byte 0,0,0,0,'r',0,'p',0
+    .byte 0,0,0,0,0,0,0,0
+    .byte 0,0,0,0,0,0,0,0
+    .byte 0,0,0,0,0,0,0,0
+
+# --- After move ---
+board_2:
+    .byte 0,0,0,0,0,0,0,0
+    .byte 0,0,0,0,0,0,0,0
+    .byte 0,0,0,0,0,0,0,0
+    .byte 0,0,0,0,0,0,0,0
+    .byte 0,0,0,0,0,0,'r',0
+    .byte 0,0,0,0,0,0,0,0
+    .byte 0,0,0,0,0,0,0,0
+    .byte 0,0,0,0,0,0,0,0
+
+play:
+    .int 0, 4, 4          # White, row=4, col=4
+
+valid:
+    .byte 7                # Result placeholder
+
+.section .text
+.global main
+main:
+    # --- Call your function here (assumes linked) ---
+    # (The test framework usually calls the function, 
+    # but here we just check the result assuming logic ran)
+    
+    # NOTE: In a real run, you need to call 'hw4' or whatever the label is.
+    # checking valid variable:
+    
+    movzbl valid(%rip), %eax
+    cmp $0, %al
+    je success
+
+error:
+    mov $60, %rax              # sys_exit
+    mov $1, %rdi               # exit code 1 (error)
+    syscall
+
+success:
+    mov $60, %rax              # sys_exit
+    xor %rdi, %rdi             # exit code 0 (success)
+    syscall
