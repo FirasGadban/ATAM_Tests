@@ -1,0 +1,55 @@
+# -----------------------------------------------------
+# TEST 9: Black Pawn Invalid Backward Move
+# -----------------------------------------------------
+# Black Pawn at (6,0) -> (7,0)
+# play = [1, 6, 0]
+# valid - expected result = 0
+# -----------------------------------------------------
+
+.section .data
+
+# --- Before move ---
+board_1:
+    .byte 'r','n','b','q','k','b','n','r'
+    .byte 'p','p','p','p','p','p','p','p'
+    .byte 0,0,0,0,0,0,0,0
+    .byte 0,0,0,0,0,0,0,0
+    .byte 0,0,0,0,0,0,0,0
+    .byte 0,0,0,0,0,0,0,0
+    .byte 'P','P','P','P','P','P','P','P'  # Pawn at 6,0
+    .byte 0,'N','B','Q','K','B','N','R'    # Empty spot at 7,0
+
+# --- After move ---
+board_2:
+    .byte 'r','n','b','q','k','b','n','r'
+    .byte 'p','p','p','p','p','p','p','p'
+    .byte 0,0,0,0,0,0,0,0
+    .byte 0,0,0,0,0,0,0,0
+    .byte 0,0,0,0,0,0,0,0
+    .byte 0,0,0,0,0,0,0,0
+    .byte 0,'P','P','P','P','P','P','P'    # Pawn left 6,0
+    .byte 'P','N','B','Q','K','B','N','R'  # Pawn moved to 7,0 (Illegal)
+
+play:
+    .int 1, 6, 0          # 1 = Black, Row=6, Col=0
+
+valid:
+    .byte 7                # output result placeholder
+
+.section .text
+
+    # After ex4 returns, check if valid = 0 
+    movzbl valid(%rip), %eax  
+    cmp $0, %al                
+    je success                 
+
+error:
+    mov $60, %rax              # sys_exit
+    mov $1, %rdi               # exit code 1 (error)
+    syscall
+
+success:
+    mov $60, %rax              # sys_exit
+    xor %rdi, %rdi             # exit code 0 (success)
+    syscall
+

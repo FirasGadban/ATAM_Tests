@@ -1,0 +1,55 @@
+# -----------------------------------------------------
+# TEST 18: White Pawn Invalid Forward Move (Blocked)
+# -----------------------------------------------------
+# White Pawn at (1,3) -> (2,3) but path blocked
+# play = [0, 1, 3]
+# valid - expected result = 0
+# -----------------------------------------------------
+
+.section .data
+
+# --- Before move ---
+board_1:
+    .byte 'r','n','b','q','k','b','n','r'
+    .byte 'p','p','p','p','p','p','p','p'
+    .byte 0,0,0,'P',0,0,0,0                 # Black Pawn blocks at 2,3
+    .byte 0,0,0,0,0,0,0,0
+    .byte 0,0,0,0,0,0,0,0
+    .byte 0,0,0,0,0,0,0,0
+    .byte 'P','P','P','P','P','P','P','P'  # White Pawn at 1,3
+    .byte 'R','N','B','Q','K','B','N','R'
+
+# --- After move ---
+board_2:
+    .byte 'r','n','b','q','k','b','n','r'
+    .byte 'p','p','p', 0 ,'p','p','p','p'  # White Pawn left 1,3
+    .byte 0,0,0,'p',0,0,0,0                 # White Pawn moved to 2,3 (Invalid - blocked)
+    .byte 0,0,0,0,0,0,0,0
+    .byte 0,0,0,0,0,0,0,0
+    .byte 0,0,0,0,0,0,0,0
+    .byte 'P','P','P','P','P','P','P','P'
+    .byte 'R','N','B','Q','K','B','N','R'
+
+play:
+    .int 0, 1, 3          # 0 = White, Row=1, Col=3
+
+valid:
+    .byte 7                # output result placeholder
+
+.section .text
+
+    # After ex4 returns, check if valid = 0 
+    movzbl valid(%rip), %eax  
+    cmp $0, %al                
+    je success                 
+
+error:
+    mov $60, %rax              # sys_exit
+    mov $1, %rdi               # exit code 1 (error)
+    syscall
+
+success:
+    mov $60, %rax              # sys_exit
+    xor %rdi, %rdi             # exit code 0 (success)
+    syscall
+

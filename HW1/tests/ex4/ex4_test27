@@ -1,0 +1,55 @@
+# -----------------------------------------------------
+# TEST 27: White Queen Blocked Path
+# -----------------------------------------------------
+# White Queen at (3,3) -> (6,3) but path blocked
+# play = [0, 3, 3]
+# valid - expected result = 0
+# -----------------------------------------------------
+
+.section .data
+
+# --- Before move ---
+board_1:
+    .byte 'r','n','b','q','k','b','n','r'
+    .byte 'p','p','p','p','p','p','p','p'
+    .byte 0,0,0,0,0,0,0,0
+    .byte 0,0,0,'q',0,0,0,0               # White Queen at 3,3
+    .byte 0,0,0,0,0,0,0,0
+    .byte 0,0,0,'P',0,0,0,0               # Black Pawn blocks at 5,3
+    .byte 'P','P','P', 0 ,'P','P','P','P'
+    .byte 'R','N','B','Q','K','B','N','R'
+
+# --- After move ---
+board_2:
+    .byte 'r','n','b','q','k','b','n','r'
+    .byte 'p','p','p','p','p','p','p','p'
+    .byte 0,0,0,0,0,0,0,0
+    .byte 0,0,0, 0 ,0,0,0,0               # Queen left 3,3
+    .byte 0,0,0,0,0,0,0,0
+    .byte 0,0,0,'P',0,0,0,0
+    .byte 'P','P','P','q','P','P','P','P' # Queen attempted to move to 6,3 (Invalid - blocked)
+    .byte 'R','N','B','Q','K','B','N','R'
+
+play:
+    .int 0, 3, 3          # 0 = White, Row=3, Col=3
+
+valid:
+    .byte 7                # output result placeholder
+
+.section .text
+
+    # After ex4 returns, check if valid = 0 
+    movzbl valid(%rip), %eax  
+    cmp $0, %al                
+    je success                 
+
+error:
+    mov $60, %rax              # sys_exit
+    mov $1, %rdi               # exit code 1 (error)
+    syscall
+
+success:
+    mov $60, %rax              # sys_exit
+    xor %rdi, %rdi             # exit code 0 (success)
+    syscall
+

@@ -1,0 +1,55 @@
+# -----------------------------------------------------
+# TEST 22: White King Valid Capture
+# -----------------------------------------------------
+# White King at (0,4) -> (1,4) captures Black Pawn
+# play = [0, 0, 4]
+# valid - expected result = 1
+# -----------------------------------------------------
+
+.section .data
+
+# --- Before move ---
+board_1:
+    .byte 'r','n','b','q','k','b','n','r' # King at 0,4
+    .byte 'p','p','p','p','P','p','p','p' # Black Pawn at 1,4
+    .byte 0,0,0,0,0,0,0,0
+    .byte 0,0,0,0,0,0,0,0
+    .byte 0,0,0,0,0,0,0,0
+    .byte 0,0,0,0,0,0,0,0
+    .byte 'P','P','P','P', 0 ,'P','P','P'
+    .byte 'R','N','B','Q', 0 ,'B','N','R'
+
+# --- After move ---
+board_2:
+    .byte 'r','n','b','q', 0 ,'b','n','r' # King left 0,4
+    .byte 'p','p','p','p','k','p','p','p' # King moved to 1,4 (captured 'P')
+    .byte 0,0,0,0,0,0,0,0
+    .byte 0,0,0,0,0,0,0,0
+    .byte 0,0,0,0,0,0,0,0
+    .byte 0,0,0,0,0,0,0,0
+    .byte 'P','P','P','P', 0 ,'P','P','P'
+    .byte 'R','N','B','Q', 0 ,'B','N','R'
+
+play:
+    .int 0, 0, 4          # 0 = White, Row=0, Col=4
+
+valid:
+    .byte 7                # output result placeholder
+
+.section .text
+
+    # After ex4 returns, check if valid = 1 
+    movzbl valid(%rip), %eax  
+    cmp $1, %al                
+    je success                 
+
+error:
+    mov $60, %rax              # sys_exit
+    mov $1, %rdi               # exit code 1 (error)
+    syscall
+
+success:
+    mov $60, %rax              # sys_exit
+    xor %rdi, %rdi             # exit code 0 (success)
+    syscall
+

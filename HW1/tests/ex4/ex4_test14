@@ -1,0 +1,55 @@
+# -----------------------------------------------------
+# TEST 14: Black Bishop Valid Diagonal Move
+# -----------------------------------------------------
+# Black Bishop at (7,5) -> (4,2)
+# play = [1, 7, 5]
+# valid - expected result = 0
+# -----------------------------------------------------
+
+.section .data
+
+# --- Before move ---
+board_1:
+    .byte 'r','n','b','q','k','b','n','r'
+    .byte 'p','p','p','p','p','p','p','p'
+    .byte 0,0,0,0,0,0,0,0
+    .byte 0,0,0,0,0,0,0,0
+    .byte 0,0,0,0,0,0,0,0
+    .byte 0,0,0,0,0,0,0,0
+    .byte 'P','P','P','P','P','P','P','P'
+    .byte 'R','N','B','Q','K','B','N','R' # Bishop at 7,5
+
+# --- After move ---
+board_2:
+    .byte 'r','n','b','q','k','b','n','r'
+    .byte 'p','p','p','p','p','p','p','p'
+    .byte 0,0,0,0,0,0,0,0
+    .byte 0,0,0,0,0,0,0,0
+    .byte 0,0,'B',0,0,0,0,0                 # Bishop landed at 4,2
+    .byte 0,0,0,0,0,0,0,0
+    .byte 'P','P','P','P','P','P','P','P'
+    .byte 'R','N','B','Q','K', 0 ,'N','R' # Bishop left 7,5
+
+play:
+    .int 1, 7, 5          # 1 = Black, Row=7, Col=5
+
+valid:
+    .byte 7                # output result placeholder
+
+.section .text
+
+    # After ex4 returns, check if valid = 1 
+    movzbl valid(%rip), %eax  
+    cmp $0, %al                
+    je success                 
+
+error:
+    mov $60, %rax              # sys_exit
+    mov $1, %rdi               # exit code 1 (error)
+    syscall
+
+success:
+    mov $60, %rax              # sys_exit
+    xor %rdi, %rdi             # exit code 0 (success)
+    syscall
+

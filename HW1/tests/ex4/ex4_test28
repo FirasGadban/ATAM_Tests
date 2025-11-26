@@ -1,0 +1,55 @@
+# -----------------------------------------------------
+# TEST 28: Black Pawn Invalid Diagonal Without Capture
+# -----------------------------------------------------
+# Black Pawn at (6,3) -> (5,2) but no piece to capture
+# play = [1, 6, 3]
+# valid - expected result = 0
+# -----------------------------------------------------
+
+.section .data
+
+# --- Before move ---
+board_1:
+    .byte 'r','n','b','q','k','b','n','r'
+    .byte 'p','p','p','p','p','p','p','p'
+    .byte 0,0,0,0,0,0,0,0
+    .byte 0,0,0,0,0,0,0,0
+    .byte 0,0,0,0,0,0,0,0
+    .byte 0,0, 0 ,0,0,0,0,0               # Empty square at 5,2
+    .byte 'P','P','P','P','P','P','P','P' # Black Pawn at 6,3
+    .byte 'R','N','B','Q','K','B','N','R'
+
+# --- After move ---
+board_2:
+    .byte 'r','n','b','q','k','b','n','r'
+    .byte 'p','p','p','p','p','p','p','p'
+    .byte 0,0,0,0,0,0,0,0
+    .byte 0,0,0,0,0,0,0,0
+    .byte 0,0,0,0,0,0,0,0
+    .byte 0,0,'P',0,0,0,0,0               # Pawn moved to 5,2 (Invalid - diagonal without capture)
+    .byte 'P','P','P', 0 ,'P','P','P','P' # Pawn left 6,3
+    .byte 'R','N','B','Q','K','B','N','R'
+
+play:
+    .int 1, 6, 3          # 1 = Black, Row=6, Col=3
+
+valid:
+    .byte 7                # output result placeholder
+
+.section .text
+
+    # After ex4 returns, check if valid = 0 
+    movzbl valid(%rip), %eax  
+    cmp $0, %al                
+    je success                 
+
+error:
+    mov $60, %rax              # sys_exit
+    mov $1, %rdi               # exit code 1 (error)
+    syscall
+
+success:
+    mov $60, %rax              # sys_exit
+    xor %rdi, %rdi             # exit code 0 (success)
+    syscall
+

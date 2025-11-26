@@ -1,0 +1,55 @@
+# -----------------------------------------------------
+# TEST 11: White Bishop Invalid Friendly Fire
+# -----------------------------------------------------
+# White Bishop at (0,2) -> (1,3) blocked by White Pawn
+# play = [0, 0, 2]
+# valid - expected result = 0
+# -----------------------------------------------------
+
+.section .data
+
+# --- Before move ---
+board_1:
+    .byte 'r','n','b','q','k','b','n','r'  # Bishop at 0,2
+    .byte 'p','p','p','p','p','p','p','p'  # White Pawn at 1,3
+    .byte 0,0,0,0,0,0,0,0
+    .byte 0,0,0,0,0,0,0,0
+    .byte 0,0,0,0,0,0,0,0
+    .byte 0,0,0,0,0,0,0,0
+    .byte 'P','P','P','P','P','P','P','P'
+    .byte 'R','N','B','Q','K','B','N','R'
+
+# --- After move ---
+board_2:
+    .byte 'r','n', 0 ,'q','k','b','n','r'
+    .byte 'p','p','p','b','p','p','p','p'  # Bishop moved to 1,3 (Illegal - Friendly Fire)
+    .byte 0,0,0,0,0,0,0,0
+    .byte 0,0,0,0,0,0,0,0
+    .byte 0,0,0,0,0,0,0,0
+    .byte 0,0,0,0,0,0,0,0
+    .byte 'P','P','P','P','P','P','P','P'
+    .byte 'R','N','B','Q','K','B','N','R'
+
+play:
+    .int 0, 0, 2          # 0 = White, Row=0, Col=2
+
+valid:
+    .byte 7                # output result placeholder
+
+.section .text
+
+    # After ex4 returns, check if valid = 0 
+    movzbl valid(%rip), %eax  
+    cmp $0, %al                
+    je success                 
+
+error:
+    mov $60, %rax              # sys_exit
+    mov $1, %rdi               # exit code 1 (error)
+    syscall
+
+success:
+    mov $60, %rax              # sys_exit
+    xor %rdi, %rdi             # exit code 0 (success)
+    syscall
+

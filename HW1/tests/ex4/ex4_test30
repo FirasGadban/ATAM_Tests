@@ -1,0 +1,55 @@
+# -----------------------------------------------------
+# TEST 30: Black Queen Invalid Move Pattern
+# -----------------------------------------------------
+# Black Queen at (7,3) -> (4,1) (invalid - not straight/diagonal)
+# play = [1, 7, 3]
+# valid - expected result = 0
+# -----------------------------------------------------
+
+.section .data
+
+# --- Before move ---
+board_1:
+    .byte 'r','n','b','q','k','b','n','r'
+    .byte 'p','p','p','p','p','p','p','p'
+    .byte 0,0,0,0,0,0,0,0
+    .byte 0,0,0,0,0,0,0,0
+    .byte 0,0,0,0,0,0,0,0
+    .byte 0,0,0,0,0,0,0,0
+    .byte 'P','P','P','P','P','P','P','P'
+    .byte 'R','N','B','Q','K','B','N','R' # Queen at 7,3
+
+# --- After move ---
+board_2:
+    .byte 'r','n','b','q','k','b','n','r'
+    .byte 'p','p','p','p','p','p','p','p'
+    .byte 0,0,0,0,0,0,0,0
+    .byte 0,0,0,0,0,0,0,0
+    .byte 0,'Q',0,0,0,0,0,0                 # Queen attempted to move to 4,1 (Invalid - not straight/diagonal)
+    .byte 0,0,0,0,0,0,0,0
+    .byte 'P','P','P','P','P','P','P','P'
+    .byte 'R','N','B', 0 ,'K','B','N','R' # Queen left 7,3
+
+play:
+    .int 1, 7, 3          # 1 = Black, Row=7, Col=3
+
+valid:
+    .byte 7                # output result placeholder
+
+.section .text
+
+    # After ex4 returns, check if valid = 0 
+    movzbl valid(%rip), %eax  
+    cmp $0, %al                
+    je success                 
+
+error:
+    mov $60, %rax              # sys_exit
+    mov $1, %rdi               # exit code 1 (error)
+    syscall
+
+success:
+    mov $60, %rax              # sys_exit
+    xor %rdi, %rdi             # exit code 0 (success)
+    syscall
+

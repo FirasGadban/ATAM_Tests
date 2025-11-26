@@ -1,0 +1,55 @@
+# -----------------------------------------------------
+# TEST 19: Black Rook Invalid Move (Not Straight)
+# -----------------------------------------------------
+# Black Rook at (7,0) -> (5,2) (invalid - not straight)
+# play = [1, 7, 0]
+# valid - expected result = 0
+# -----------------------------------------------------
+
+.section .data
+
+# --- Before move ---
+board_1:
+    .byte 'r','n','b','q','k','b','n','r'
+    .byte 'p','p','p','p','p','p','p','p'
+    .byte 0,0,0,0,0,0,0,0
+    .byte 0,0,0,0,0,0,0,0
+    .byte 0,0,0,0,0,0,0,0
+    .byte 0,0,0,0,0,0,0,0
+    .byte 'P','P','P','P','P','P','P','P'
+    .byte 'R','N','B','Q','K','B','N','R' # Rook at 7,0
+
+# --- After move ---
+board_2:
+    .byte 'r','n','b','q','k','b','n','r'
+    .byte 'p','p','p','p','p','p','p','p'
+    .byte 0,0,0,0,0,0,0,0
+    .byte 0,0,0,0,0,0,0,0
+    .byte 0,0,0,0,0,0,0,0
+    .byte 0,0,'R',0,0,0,0,0                 # Rook moved to 5,2 (Invalid - not straight)
+    .byte 'P','P','P','P','P','P','P','P'
+    .byte 0 ,'N','B','Q','K','B','N','R' # Rook left 7,0
+
+play:
+    .int 1, 7, 0          # 1 = Black, Row=7, Col=0
+
+valid:
+    .byte 7                # output result placeholder
+
+.section .text
+
+    # After ex4 returns, check if valid = 0 
+    movzbl valid(%rip), %eax  
+    cmp $0, %al                
+    je success                 
+
+error:
+    mov $60, %rax              # sys_exit
+    mov $1, %rdi               # exit code 1 (error)
+    syscall
+
+success:
+    mov $60, %rax              # sys_exit
+    xor %rdi, %rdi             # exit code 0 (success)
+    syscall
+
